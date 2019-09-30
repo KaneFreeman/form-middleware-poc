@@ -1,0 +1,21 @@
+{
+  "name": "dojo-codesandbox-template",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "dojo build --mode dev --watch --serve",
+    "build": "dojo build --mode dist",
+    "build:dev": "dojo build --mode dev"
+  },
+  "main": "src/main.tsx",
+  "dependencies": {
+    "@dojo/framework": "6.0.3",
+    "@dojo/widgets": "6.0.0",
+    "tailwindcss": "1.1.2",
+    "tslib": "1.10.0"
+  },
+  "devDependencies": {
+    "@dojo/cli": "6.0.0",
+    "@dojo/cli-build-app": "6.0.4",
+    "typescript": "3.4.5"
+  }
+}
