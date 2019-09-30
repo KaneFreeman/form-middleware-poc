@@ -54,12 +54,6 @@ export const createFormMiddleware = <S extends { [key: string]: any }>(initial?:
 			valid() {
 				const values = icache.get<Valid>('valid') || {};
 				const requiredValues = icache.get<Required>('required') || {};
-        console.log(values, requiredValues);
-				Object.keys(values).forEach((key) => {
-          const valid = values[key];
-          const value = typeof valid === 'boolean' ? valid : valid.valid;
-          console.log(key, value, requiredValues[key], value === undefined && !requiredValues[key] || Boolean(value));
-        });
 				return Object.keys(values).every((key) => {
           const valid = values[key];
           const value = typeof valid === 'boolean' ? valid : valid.valid;

@@ -26,7 +26,6 @@ const App = factory(({ middleware: { form } }) => {
     lastName: ''
   });
 
-  console.log(form.valid(), form.value(), middleName.required());
   const toggleRequired = () => middleName.required(!middleName.required());
 
   return (
