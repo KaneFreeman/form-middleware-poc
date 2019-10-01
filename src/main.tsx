@@ -1,4 +1,5 @@
 import { tsx, create, renderer } from '@dojo/framework/core/vdom';
+import icache from '@dojo/framework/core/middleware/icache';
 
 import TextInput from '@dojo/widgets/text-input';
 import Button from '@dojo/widgets/button';
@@ -12,24 +13,24 @@ interface Form {
 }
 
 const form = createFormMiddleware<Form>();
-const factory = create({ form });
+const factory = create({ form, icache });
 
-const App = factory(({ middleware: { form } }) => {
+const App = factory(({ middleware: { form, icache } }) => {
   const firstName = form.field('firstName', true);
   const middleName = form.field('middleName');
   const lastName = form.field('lastName', true);
 
-  const onSubmit = () => form.submit((values) => {
-    alert(values);
-  }, {
+  const onSubmit = () => form.submit((values) => icache.set('results', values), {
     firstName: '',
     lastName: ''
   });
 
   const toggleRequired = () => middleName.required(!middleName.required());
 
+  const results = icache.get<Form>('results');
+
   return (
-    <div class="flex items-center mb-6 m-6">
+    <div>
       <form>
         <TextInput
           label="First Name"
@@ -70,10 +71,21 @@ const App = factory(({ middleware: { form } }) => {
         <Button type="button" onClick={toggleRequired}>
           {`Make middle name ${middleName.required() ? 'optional' : 'required'}`}
         </Button>
+        <Button type="button" onClick={form.reset}>Reset</Button>
         <Button type="button" disabled={!form.valid()} onClick={onSubmit}>
           Submit
         </Button>
       </form>
+      {results && (
+        <div>
+          <h2>Results</h2>
+          <p>
+            First Name: {results.firstName}<br />
+            Middle Name: {results.middleName}<br />
+            Last Name: {results.lastName}
+          </p>
+        </div>
+      )}
     </div>
   );
 });

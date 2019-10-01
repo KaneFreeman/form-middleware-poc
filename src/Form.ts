@@ -13,10 +13,11 @@ interface FormMiddleware<S> {
 		(defaults: S): S;
 	};
 	submit: {
-		(callback: (values: Partial<S>) => void): void;
-		(callback: (values: S) => void, defaults: S): void;
+		<T = void>(callback: (values: Partial<S>) => T): T;
+		<T = void>(callback: (values: S) => T, defaults: S): T;
 	};
 	valid(): boolean;
+	reset(): void;
 	field<K extends keyof S>(name: K, required?: boolean): Field<S, K>;
 }
 
@@ -26,7 +27,7 @@ export interface Field<S, K extends keyof S> {
 		(): S[K] | undefined;
 	};
   valid(valid?: boolean, message?: string): Validity;
-  required(required?: boolean): boolean;
+	required(required?: boolean): boolean;
 }
 
 export const createFormMiddleware = <S extends { [key: string]: any }>(initial?: Partial<S>) => {
@@ -42,14 +43,14 @@ export const createFormMiddleware = <S extends { [key: string]: any }>(initial?:
 				}
 				return values;
 			},
-			submit(callback: (values: any) => void, defaults?: S) {
+			submit<T = void>(callback: (values: any) => T, defaults?: S) {
 				if (!this.valid()) {
 					return;
 				}
 				if (defaults) {
-          callback(this.value(defaults));
+					return callback(this.value(defaults));
         }
-				callback(this.value());
+				return callback(this.value());
 			},
 			valid() {
 				const values = icache.get<Valid>('valid') || {};
@@ -59,6 +60,10 @@ export const createFormMiddleware = <S extends { [key: string]: any }>(initial?:
           const value = typeof valid === 'boolean' ? valid : valid.valid;
           return (value === undefined && !requiredValues[key]) || Boolean(value);
 				});
+			},
+			reset() {
+				icache.set('values', initial || {});
+				icache.set('valid', {});
 			},
 			field<K extends keyof S>(name: K, required = false): Field<S, K> {
         const requiredValues = icache.getOrSet<Required>('required', {});

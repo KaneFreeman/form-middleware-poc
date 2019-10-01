@@ -10,7 +10,6 @@
   "dependencies": {
     "@dojo/framework": "6.0.3",
     "@dojo/widgets": "6.0.0",
-    "tailwindcss": "1.1.2",
     "tslib": "1.10.0"
   },
   "devDependencies": {
