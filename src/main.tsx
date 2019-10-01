@@ -10,6 +10,7 @@ interface Form {
   firstName: string;
   middleName?: string;
   lastName: string;
+  email?: string;
 }
 
 const form = createFormMiddleware<Form>();
@@ -19,6 +20,7 @@ const App = factory(({ middleware: { form, icache } }) => {
   const firstName = form.field('firstName', true);
   const middleName = form.field('middleName');
   const lastName = form.field('lastName', true);
+  const email = form.field('email');
 
   const onSubmit = () => form.submit((values) => icache.set('results', values), {
     firstName: '',
@@ -59,6 +61,16 @@ const App = factory(({ middleware: { form, icache } }) => {
           onValidate={lastName.valid}
           minLength={2}
         />
+        <TextInput
+          label="Email"
+          placeholder="Enter an email address"
+          required={email.required()}
+          value={email.value()}
+          onInput={val => email.value(String(val))}
+          onValidate={email.valid}
+          type="email"
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 3}$"
+        />
         <Button
           type="button"
           onClick={() => {
@@ -82,7 +94,8 @@ const App = factory(({ middleware: { form, icache } }) => {
           <p>
             First Name: {results.firstName}<br />
             Middle Name: {results.middleName}<br />
-            Last Name: {results.lastName}
+            Last Name: {results.lastName}<br />
+            Email: {results.email}
           </p>
         </div>
       )}
