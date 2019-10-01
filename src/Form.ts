@@ -30,7 +30,7 @@ export interface Field<S, K extends keyof S> {
 	required(required?: boolean): boolean;
 }
 
-export const createFormMiddleware = <S extends { [key: string]: any }>(initial?: Partial<S>) => {
+export const createFormMiddleware = <S extends { [key: string]: any } = any>(initial?: Partial<S>) => {
 	const formMiddleware = factory(function Form({ middleware: { icache } }): FormMiddleware<S> {
 		if (initial) {
 			icache.set('values', initial);
