@@ -63,7 +63,13 @@ export const createFormMiddleware = <S extends { [key: string]: any } = any>(ini
 			},
 			reset() {
 				icache.set('values', initial || {});
-				icache.set('valid', {});
+				let valid: Valid = {};
+				const values = icache.get<Valid>('valid') || {};
+				Object.keys(values).map((key) => {
+					valid[key] = { valid: undefined, message: '' };
+				});
+				icache.set('valid', valid);
+				icache.set('required', {});
 			},
 			field<K extends keyof S>(name: K, required = false): Field<S, K> {
         const requiredValues = icache.getOrSet<Required>('required', {});
@@ -74,7 +80,7 @@ export const createFormMiddleware = <S extends { [key: string]: any } = any>(ini
           });
         }
 				return {
-					value: (newValue?: S[K]) => {
+					value: (newValue?: any): any => {
 						const values = icache.getOrSet('values', {}) as S;
 						if (newValue !== undefined && values[name] !== newValue) {
 							icache.set('values', { ...values, [name]: newValue });
@@ -112,7 +118,7 @@ export const createFormMiddleware = <S extends { [key: string]: any } = any>(ini
             }
             return Boolean(values[name as string]);
           }
-				};
+				} as Field<S, K>;
 			}
 		};
 	});

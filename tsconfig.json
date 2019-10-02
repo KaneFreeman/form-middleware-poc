@@ -25,6 +25,6 @@
 		"types": []
 	},
 	"include": [
-		"./src/**/*.tsx", "src/Form.ts"
+		"./src/**/*.tsx", "src/**/*.ts"
 	]
 }
