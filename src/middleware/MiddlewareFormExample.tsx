@@ -73,11 +73,11 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
         />
         <Button
           type="button"
-          onClick={() => {
-            firstName.value('Daniel');
-            middleName.value('');
-            lastName.value('Lautzenheiser');
-          }}>
+          onClick={() => form.value({
+            firstName: 'Daniel',
+            middleName: '',
+            lastName: 'Lautzenheiser'
+          })}>
           Fill
         </Button>
         <Button type="button" onClick={toggleRequired}>

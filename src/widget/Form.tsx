@@ -8,7 +8,7 @@ const form = createFormMiddleware();
 interface FormProperties {
 	onSubmit(values: any): void;
 	renderer(options: {
-		values: <S extends Record<string, any> = any>() => ({
+		values: <S extends Record<string, any> = any>(values?: Partial<S>) => ({
 			set<K extends keyof S>(key: K, value: S[K]): S[K],
 			get<K extends keyof S>(key: K): S[K] | undefined
 		}),
@@ -26,16 +26,19 @@ const factory = create({ form }).properties<FormProperties>();
 export default factory(function Form({ properties, middleware: { form } }) {
 	const { onSubmit, renderer } = properties();
 
-	const values = () => ({
-		get: (key: string | number | symbol) => {
-			const field = form.field(key);
-			return field.value();
-		},
-		set: (key: string | number | symbol, value?: any) => {
-			const field = form.field(key);
-			return field.value(value);
-		}
-	});
+	const values = (values?: any) => {
+		form.value(values);
+		return {
+			get: (key: string | number | symbol) => {
+				const field = form.field(key);
+				return field.value();
+			},
+			set: (key: string | number | symbol, value?: any) => {
+				const field = form.field(key);
+				return field.value(value);
+			}
+		};
+};
 
 	const required = (key: string | number | symbol, required?: boolean) => {
 		const field = form.field(key);

@@ -69,9 +69,11 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 						<Button
 							type="button"
 							onClick={() => {
-								set('firstName', 'Daniel');
-								set('middleName', '');
-								set('lastName', 'Lautzenheiser');
+								values({
+									firstName: 'Daniel',
+									middleName: '',
+									lastName: 'Lautzenheiser'
+								});
 							}}>
 							Fill
 						</Button>,

@@ -10,7 +10,8 @@ type Required = Record<string, boolean>;
 interface FormMiddleware<S> {
 	value: {
 		(): Partial<S>;
-		(defaults: S): S;
+		(values: S): S;
+		(values: Partial<S>): Partial<S>;
 	};
 	submit: {
 		<T = void>(callback: (values: Partial<S>) => T): T;
@@ -36,10 +37,11 @@ export const createFormMiddleware = <S extends Record<string, any> = any>(initia
 			icache.set('values', initial);
 		}
 		return {
-			value(defaults?: S): any {
-				const values = icache.getOrSet<Partial<S>>('values', {});
-				if (defaults) {
-					return { ...defaults, ...values } as S;
+			value(values?: any): any {
+				const currentValues = icache.getOrSet<Partial<S>>('values', {});
+				if (values) {
+					icache.set('values', values);
+					return { ...currentValues, ...values };
 				}
 				return values;
 			},
@@ -48,7 +50,7 @@ export const createFormMiddleware = <S extends Record<string, any> = any>(initia
 					return;
 				}
 				if (defaults) {
-					return callback(this.value(defaults));
+					return { ...defaults, ...this.value() } as S;
         }
 				return callback(this.value());
 			},
