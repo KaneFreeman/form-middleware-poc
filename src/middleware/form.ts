@@ -4,7 +4,7 @@ import icache from '@dojo/framework/core/middleware/icache';
 const factory = create({ icache });
 
 type Valid = { [key: string]: Validity };
-type Validity = boolean | { valid?: boolean; message?: string };
+export type Validity = boolean | { valid?: boolean; message?: string };
 type Required = { [key: string]: boolean };
 
 interface FormMiddleware<S> {
@@ -105,7 +105,7 @@ export const createFormMiddleware = <S extends { [key: string]: any } = any>(ini
 							});
 							return value;
 						}
-						return values[name as string];
+						return Boolean(values[name as string]);
           },
           required: (required?: boolean) => {
             const values = icache.getOrSet<Required>('required', {});

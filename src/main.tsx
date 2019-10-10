@@ -1,7 +1,7 @@
 import { tsx, create, renderer } from '@dojo/framework/core/vdom';
 
 import MiddlewareFormExample from './middleware/MiddlewareFormExample';
-import MetaFormExample from './meta/MetaFormExample';
+import WidgetFormExample from './widget/WidgetFormExample';
 
 const factory = create();
 
@@ -10,8 +10,8 @@ const App = factory(() => {
     <div>
       <h2>Middleware</h2>
       <MiddlewareFormExample />
-      <h2>Meta</h2>
-      <MetaFormExample />
+      <h2>Widget</h2>
+      <WidgetFormExample />
     </div>
   );
 });
