@@ -8,7 +8,7 @@ const form = createFormMiddleware();
 interface FormProperties {
 	onSubmit(values: any): void;
 	renderer(options: {
-		values: <S extends { [key: string]: any } = any>() => ({
+		values: <S extends Record<string, any> = any>() => ({
 			set<K extends keyof S>(key: K, value: S[K]): S[K],
 			get<K extends keyof S>(key: K): S[K] | undefined
 		}),

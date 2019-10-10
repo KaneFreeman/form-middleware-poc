@@ -3,9 +3,9 @@ import icache from '@dojo/framework/core/middleware/icache';
 
 const factory = create({ icache });
 
-type Valid = { [key: string]: Validity };
+type Valid = Record<string, Validity>;
 export type Validity = boolean | { valid?: boolean; message?: string };
-type Required = { [key: string]: boolean };
+type Required = Record<string, boolean>;
 
 interface FormMiddleware<S> {
 	value: {
@@ -30,7 +30,7 @@ export interface Field<S, K extends keyof S> {
 	required(required?: boolean): boolean;
 }
 
-export const createFormMiddleware = <S extends { [key: string]: any } = any>(initial?: Partial<S>) => {
+export const createFormMiddleware = <S extends Record<string, any> = any>(initial?: Partial<S>) => {
 	const formMiddleware = factory(function Form({ middleware: { icache } }): FormMiddleware<S> {
 		if (initial) {
 			icache.set('values', initial);
