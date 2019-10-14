@@ -6,8 +6,9 @@ const factory = create({ icache });
 type Valid = Record<string, Validity>;
 export type Validity = boolean | { valid?: boolean; message?: string };
 type Required = Record<string, boolean>;
+type Disabled = Record<string, boolean>;
 
-interface FormMiddleware<S> {
+export interface FormMiddleware<S> {
 	value: {
 		(): Partial<S>;
 		(values: S): S;
@@ -17,6 +18,7 @@ interface FormMiddleware<S> {
 		<T = void>(callback: (values: Partial<S>) => T): T;
 		<T = void>(callback: (values: S) => T, defaults: S): T;
 	};
+	disabled(disabled?: boolean): boolean;
 	valid(): boolean;
 	reset(): void;
 	field<K extends keyof S>(name: K, required?: boolean): Field<S, K>;
@@ -29,6 +31,7 @@ export interface Field<S, K extends keyof S> {
 	};
   valid(valid?: boolean, message?: string): Validity;
 	required(required?: boolean): boolean;
+	disabled(required?: boolean): boolean;
 }
 
 export const createFormMiddleware = <S extends Record<string, any> = any>(initial?: Partial<S>) => {
@@ -53,6 +56,13 @@ export const createFormMiddleware = <S extends Record<string, any> = any>(initia
 					return { ...defaults, ...this.value() } as S;
         }
 				return callback(this.value());
+			},
+			disabled(disabled?: boolean) {
+				if (disabled !== undefined) {
+					icache.set('formDisabled', disabled);
+					return disabled;
+				}
+				return icache.getOrSet('formDisabled', false);
 			},
 			valid() {
 				const values = icache.get<Valid>('valid') || {};
@@ -119,6 +129,18 @@ export const createFormMiddleware = <S extends Record<string, any> = any>(initia
               return required;
             }
             return Boolean(values[name as string]);
+          },
+          disabled: (disabled?: boolean) => {
+						const formValue = icache.getOrSet<boolean>('formDisabled', false);
+            const values = icache.getOrSet<Disabled>('disabled', {});
+            if (disabled !== undefined) {
+              icache.set('disabled', {
+                ...values,
+                [name]: disabled
+              });
+              return formValue || disabled;
+            }
+            return formValue || Boolean(values[name as string]);
           }
 				} as Field<S, K>;
 			}

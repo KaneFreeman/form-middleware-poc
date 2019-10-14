@@ -42,6 +42,7 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
           value={firstName.value()}
           onInput={val => firstName.value(String(val))}
           onValidate={firstName.valid}
+          disabled={form.disabled()}
         />
         <TextInput
           label="Middle Name"
@@ -51,6 +52,7 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
           onInput={val => middleName.value(String(val))}
           onValidate={middleName.valid}
           maxLength={5}
+          disabled={form.disabled()}
         />
         <TextInput
           label="Last Name"
@@ -60,6 +62,7 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
           onInput={val => lastName.value(String(val))}
           onValidate={lastName.valid}
           minLength={2}
+          disabled={form.disabled()}
         />
         <TextInput
           label="Email"
@@ -70,9 +73,11 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
           onValidate={email.valid}
           type="email"
           pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+          disabled={form.disabled() || email.disabled()}
         />
         <Button
           type="button"
+          disabled={form.disabled()}
           onClick={() => form.value({
             firstName: 'Daniel',
             middleName: '',
@@ -80,11 +85,17 @@ export default factory(function MiddlewareFormExample({ middleware: { form, icac
           })}>
           Fill
         </Button>
-        <Button type="button" onClick={toggleRequired}>
+        <Button type="button" onClick={toggleRequired} disabled={form.disabled()}>
           {`Make middle name ${middleName.required() ? 'optional' : 'required'}`}
         </Button>
-        <Button type="button" onClick={form.reset}>Reset</Button>
-        <Button type="button" disabled={!form.valid()} onClick={onSubmit}>
+        <Button type="button" disabled={form.disabled()} onClick={form.reset}>Reset</Button>
+        <Button type="button" onClick={() => form.disabled(!form.disabled())}>
+          {`${form.disabled() ? 'Enable' : 'Disable'} Form`}
+        </Button>
+        <Button type="button" disabled={form.disabled()} onClick={() => email.disabled(!email.disabled())}>
+          {`${email.disabled() ? 'Enable' : 'Disable'} Email`}
+        </Button>
+        <Button type="button" disabled={!form.valid() || form.disabled()} onClick={onSubmit}>
           Submit
         </Button>
       </form>

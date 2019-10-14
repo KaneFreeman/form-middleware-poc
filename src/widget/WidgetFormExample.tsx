@@ -22,7 +22,7 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
     <div>
       <Form
 				onSubmit={(value) => icache.set('results', value)}
-				renderer={({ values, required, valid, form }) => {
+				renderer={({ values, required, valid, form, disabled }) => {
 					const { get, set } = values<Fields>();
 
 					required('firstName', true);
@@ -37,6 +37,7 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 							value={get('firstName')}
 							onInput={val => set('firstName', String(val))}
 							onValidate={(value, message) => valid('firstName', value, message)}
+							disabled={disabled()}
 						/>,
 						<TextInput
 							label="Middle Name"
@@ -46,6 +47,7 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 							onInput={val => set('middleName', String(val))}
 							onValidate={(value, message) => valid('middleName', value, message)}
 							maxLength={5}
+							disabled={disabled()}
 						/>,
 						<TextInput
 							label="Last Name"
@@ -55,6 +57,7 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 							onInput={val => set('lastName', String(val))}
 							onValidate={(value, message) => valid('lastName', value, message)}
 							minLength={2}
+							disabled={disabled()}
 						/>,
 						<TextInput
 							label="Email"
@@ -65,9 +68,11 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 							onValidate={(value, message) => valid('email', value, message)}
 							type="email"
 							pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+							disabled={disabled('email')}
 						/>,
 						<Button
 							type="button"
+							disabled={disabled()}
 							onClick={() => {
 								values({
 									firstName: 'Daniel',
@@ -77,11 +82,17 @@ export default factory(function MiddlewareFormExample({ middleware: { icache } }
 							}}>
 							Fill
 						</Button>,
-						<Button type="button" onClick={() => required('middleName', !required('middleName'))}>
+						<Button type="button" disabled={disabled()} onClick={() => required('middleName', !required('middleName'))}>
 							{`Make middle name ${required('middleName') ? 'optional' : 'required'}`}
 						</Button>,
-        		<Button type="button" onClick={() => form.reset()}>Reset</Button>,
-						<Button type="submit" disabled={!valid()}>
+        		<Button type="button" disabled={disabled()} onClick={() => form.reset()}>Reset</Button>,
+						<Button type="button" onClick={() => form.disabled(!form.disabled())}>
+							{`${disabled() ? 'Enable' : 'Disable'} Form`}
+						</Button>,
+						<Button type="button" disabled={disabled()} onClick={() => disabled('email', !disabled('email'))}>
+							{`${disabled('email') ? 'Enable' : 'Disable'} Email`}
+						</Button>,
+						<Button type="submit" disabled={!valid() || disabled()}>
 							Submit
 						</Button>
 					];

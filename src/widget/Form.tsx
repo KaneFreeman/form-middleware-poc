@@ -18,6 +18,12 @@ interface FormProperties {
 			(key: string): Validity
 			(key: string, valid?: boolean, message?: string): Validity
 		},
+		disabled: {
+			(): boolean,
+			(disabled: boolean): boolean,
+			(key: string): boolean
+			(key: string, disabled: boolean): boolean
+		},
 		form: ReturnType<typeof form>['api']
 	}): RenderResult;
 }
@@ -53,12 +59,20 @@ export default factory(function Form({ properties, middleware: { form } }) {
 		return form.valid();
 	}
 
+	const disabled = (keyOrDisabled?: string | boolean, disabled?: boolean) => {
+		if (keyOrDisabled === undefined || typeof keyOrDisabled === 'boolean') {
+			return form.disabled(keyOrDisabled);
+		}
+		const field = form.field(keyOrDisabled);
+		return field.disabled(disabled);
+	}
+
 	return (
 		<form onsubmit={(event) => {
 			event.preventDefault();
 			form.submit(onSubmit)
 		}}>
-			{renderer({ values, required, valid, form })}
+			{renderer({ values, required, valid, form, disabled })}
 		</form>
 	);
 });
